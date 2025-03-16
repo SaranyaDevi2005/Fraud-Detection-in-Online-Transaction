@@ -109,7 +109,7 @@ if st.button("🔍 Predict Fraud"):
         st.write(f"*Risk Score (Probability of Fraud):* {prob_fraud:.2f}")
 
         if prob_fraud > 0.7:  # If the probability is above 70%, block the transaction
-            st.markdown('<div class="warning-box">🚨 FRAUDULENT TRANSACTION DETECTED!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">🚨 FRAUDULENT TRANSACTION BLOCKED!</div>', unsafe_allow_html=True)
             trigger_alarm()
             st.subheader("🔍 Why was this transaction flagged and blocked?")
 
