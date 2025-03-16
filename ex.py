@@ -79,7 +79,7 @@ with st.sidebar:
 
 
 def trigger_alarm():
-    engine = pyttsx3.init(driverName='sapi5')
+    engine = pyttsx3.init(driverName='espeak')
     engine.say("Alert! Fraudulent transaction detected!")
     engine.runAndWait()
 
