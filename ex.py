@@ -5,6 +5,8 @@ import base64
 import time
 import pyttsx3
 from lime.lime_tabular import LimeTabularExplainer
+from gtts import gTTS
+import os
 
 # ✅ Load trained LightGBM model
 with open('lightgbm_model.pkl', 'rb') as file:
@@ -79,9 +81,9 @@ with st.sidebar:
 
 # ✅ Function to Play Alarm Sound (Voice Alert)
 def trigger_alarm():
-    engine = pyttsx3.init()
-    engine.say("Alert! Fraudulent transaction detected!")
-    engine.runAndWait()
+    tts = gTTS("Alert! Fraudulent transaction detected!", lang="en")
+    tts.save("alert.mp3")
+    #os.system("start alert.mp3")
 
 # ✅ Fraud Prediction for Manual Input
 if st.button("🔍 Predict Fraud"):
