@@ -7,7 +7,7 @@ import pyttsx3
 from lime.lime_tabular import LimeTabularExplainer
 
 
-with open('C://3rd Year//project//project//ex//lightgbm_model.pkl', 'rb') as file:
+with open('lightgbm_model.pkl', 'rb') as file:
     model, feature_names = pickle.load(file)
 
 
@@ -158,7 +158,7 @@ if st.button("🔍 Predict Fraud"):
 
 st.subheader("📡 Real-Time Monitoring")
 
-with open('C://3rd Year//project//project//ex//lightgbm_model.pkl', 'rb') as file:
+with open('lightgbm_model.pkl', 'rb') as file:
     model, feature_names = pickle.load(file)
 
 # ⭐ Added Prerequisite Section
