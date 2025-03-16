@@ -6,18 +6,18 @@ import time
 import pyttsx3
 from lime.lime_tabular import LimeTabularExplainer
 
-
+# ✅ Load trained LightGBM model
 with open('lightgbm_model.pkl', 'rb') as file:
     model, feature_names = pickle.load(file)
 
-
+# ✅ Convert Local Image to Base64 for Background Image
 def get_base64(img_path):
     with open(img_path, "rb") as file:
         return base64.b64encode(file.read()).decode()
 
 bg_img = get_base64("image.jpg")  # Ensure correct image path
 
-
+# ✅ Apply Custom CSS for Improved UI
 page_bg = f"""
 <style>
     .stApp {{
@@ -66,7 +66,7 @@ st.markdown(page_bg, unsafe_allow_html=True)
 st.title("💳 Fraud Detection System")
 st.subheader("Fill in the transaction details below:")
 
-
+# ✅ Sidebar for manual transaction input
 with st.sidebar:
     st.markdown('<h3 style="color:#FFFFFF; text-align:center;">📝 Transaction Details</h3>', unsafe_allow_html=True)
 
@@ -77,13 +77,13 @@ with st.sidebar:
     oldbalanceDest = st.number_input("🏧 Old Balance (Destination)", min_value=0.0, step=0.01, format="%.2f")
     newbalanceDest = st.number_input("🏧 New Balance (Destination)", min_value=0.0, step=0.01, format="%.2f")
 
-
+# ✅ Function to Play Alarm Sound (Voice Alert)
 def trigger_alarm():
-    engine = pyttsx3.init(driverName='espeak')
+    engine = pyttsx3.init()
     engine.say("Alert! Fraudulent transaction detected!")
     engine.runAndWait()
 
-
+# ✅ Fraud Prediction for Manual Input
 if st.button("🔍 Predict Fraud"):
     if transaction_type is None:
         st.markdown('<div class="warning-box">⚠ Please select a transaction type!</div>', unsafe_allow_html=True)
@@ -109,11 +109,11 @@ if st.button("🔍 Predict Fraud"):
         st.write(f"*Risk Score (Probability of Fraud):* {prob_fraud:.2f}")
 
         if prob_fraud > 0.7:  # If the probability is above 70%, block the transaction
-            st.markdown('<div class="warning-box">🚨 FRAUDULENT TRANSACTION BLOCKED!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">🚨 BLOCKED!</div>', unsafe_allow_html=True)
             trigger_alarm()
             st.subheader("🔍 Why was this transaction flagged and blocked?")
 
-           
+            # 😊 Replaced SHAP with LIME
             explainer = LimeTabularExplainer(
                 training_data=user_input.values,  # Use user input data
                 feature_names=feature_names,
@@ -124,7 +124,7 @@ if st.button("🔍 Predict Fraud"):
             exp = explainer.explain_instance(user_input.values[0], model.predict_proba, num_features=5)  # Get LIME explanation
             explanation_data = exp.as_list()  # Extract feature contributions
 
-            
+            # ✅ Extract actual feature names
             explanation_sentences = []
             for feature_text, weight in explanation_data:
                 feature_name = feature_text.split()[0]  # Extract feature name
@@ -155,7 +155,7 @@ if st.button("🔍 Predict Fraud"):
         else:
             st.markdown('<div class="success-box">✅ Transaction is Legitimate.</div>', unsafe_allow_html=True)
 
-
+# ✅ Real-Time Monitoring Section (Hidden initially)
 st.subheader("📡 Real-Time Monitoring")
 
 with open('lightgbm_model.pkl', 'rb') as file:
@@ -186,16 +186,16 @@ if uploaded_file:
 
 if st.session_state.uploaded_file is not None:
     if st.button("🚨 Start Monitoring"):
-        
+        # ✅ Real-Time Monitoring Logic
         def real_time_monitoring(file):
             required_columns = ["type", "amount", "oldbalanceOrg", "newbalanceOrig", "oldbalanceDest", "newbalanceDest"]
 
             try:
                 while True:
-                    file.seek(0)  
+                    file.seek(0)  # ✅ Reset file pointer to read latest data
                     data = pd.read_excel(file)
 
-                    # Validate Required Columns
+                    # ⭐ Validate Required Columns
                     if not all(col in data.columns for col in required_columns):
                         missing_cols = [col for col in required_columns if col not in data.columns]
                         st.error(f"⚠ Missing required columns: {', '.join(missing_cols)}")
@@ -203,7 +203,7 @@ if st.session_state.uploaded_file is not None:
 
                     # 🔹 Display Latest Transactions
                     st.subheader("📊 Latest Transactions Being Monitored:")
-                    st.write(data.tail(5))  
+                    st.write(data.tail(5))  # ✅ Show last 5 transactions in a table
 
                     for _, latest_data in data.iterrows():
                         user_input = pd.DataFrame([latest_data])
@@ -223,7 +223,7 @@ if st.session_state.uploaded_file is not None:
 
                         st.markdown(f"Processing Transaction: {latest_data.to_dict()}")
 
-                        #  Fraud Detection Message
+                        # ⭐ Fraud Detection Message
                         if prob_fraud > 0.7:  # If the probability is above 70%, block the transaction
                             st.markdown('<div class="warning-box">🚨 FRAUDULENT TRANSACTION DETECTED!</div>', unsafe_allow_html=True)
                             trigger_alarm()
